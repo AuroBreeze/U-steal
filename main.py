@@ -6,6 +6,7 @@ import shutil
 import os
 import toml
 from datetime import datetime
+import logging
 
 # 新建ConfigReader类
 class ConfigReader:
@@ -70,15 +71,15 @@ class USBMonitor:
                     target_file = os.path.join(self.target_folder, file)
                     # 复制文件到目标文件夹
                     shutil.copy(source_file, target_file)
-                    print(f"复制文件: {source_file} 到 {target_file}")
                     # 记录文件的完整路径和当前时间
                     config_reader.save_actual_save_path(source_file, target_file)
+                    logging.info(f"复制文件: {source_file} 到 {target_file}")
 
     def monitor_usb(self):
         """监控 U盘 的插入和移除"""
         # 获取初始的可移动驱动器列表
         previous_drives = set(self.get_removable_drives())
-        print("初始 U盘 盘符:", previous_drives)
+        logging.info(f"初始 U盘 盘符: {previous_drives}")
 
         while True:
             # 获取当前的可移动驱动器列表
@@ -88,12 +89,12 @@ class USBMonitor:
             removed_drives = previous_drives - current_drives
 
             if new_drives:
-                print(f"U盘 插入: {new_drives}")
+                logging.info(f"U盘 插入: {new_drives}")
                 # 对每个新插入的驱动器，移动特定文件
                 for drive in new_drives:
                     self.move_specific_files(drive)
             if removed_drives:
-                print(f"U盘 移除: {removed_drives}")
+                logging.info(f"U盘 移除: {removed_drives}")
 
             # 更新之前的驱动器列表
             previous_drives = current_drives
@@ -101,8 +102,20 @@ class USBMonitor:
             time.sleep(1)
 
 if __name__ == "__main__":
+    # 创建日志目录
+    log_dir = os.path.join(os.getcwd(), 'log')
+    if not os.path.exists(log_dir):
+        os.makedirs(log_dir)
+
+    # 创建日志文件
+    log_time = datetime.now().strftime('%Y%m%d%H%M%S')
+    log_file = os.path.join(log_dir, f'log_{log_time}.log')
+
+    # 配置日志记录
+    logging.basicConfig(filename=log_file, level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+
     # 读取配置文件并验证保存路径
-    config_reader = ConfigReader(".\config.toml")
+    config_reader = ConfigReader(".\\config.toml")
     actual_save_path = config_reader.validate_save_path()
     config_reader.save_actual_save_path(actual_save_path, actual_save_path)  # 修改: 传递两个相同的参数
 
