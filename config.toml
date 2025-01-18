@@ -1,0 +1,3 @@
+[Base_options]
+save_path = "C:\\Users\\27120\\"  # 保存路径,注意替换为自己的要保存的路径
+file_extensions = [".txt", ".docx"]  # 要复制的文件后缀
