@@ -102,6 +102,9 @@ class USBMonitor:
             time.sleep(1)
 
 if __name__ == "__main__":
+    import sys
+    import os
+
     # 创建日志目录
     log_dir = os.path.join(os.getcwd(), 'log')
     if not os.path.exists(log_dir):
@@ -112,7 +115,7 @@ if __name__ == "__main__":
     log_file = os.path.join(log_dir, f'log_{log_time}.log')
 
     # 配置日志记录
-    logging.basicConfig(filename=log_file, level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+    logging.basicConfig(filename=log_file, level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s', encoding='utf-8')
 
     # 读取配置文件并验证保存路径
     config_reader = ConfigReader(".\\config.toml")
